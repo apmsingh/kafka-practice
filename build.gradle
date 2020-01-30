@@ -4,6 +4,8 @@ plugins {
 }
 
 dependencies {
+    compile group: 'org.apache.kafka', name: 'kafka_2.10', version: '0.9.0.0'
+	compile group: 'org.apache.kafka', name: 'kafka-clients', version: '2.3.0'
     testImplementation 'junit:junit:4.12'
 }
 
