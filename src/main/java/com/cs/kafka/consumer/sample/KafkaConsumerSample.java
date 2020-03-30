@@ -12,6 +12,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import com.cs.kafka.constants.KafkaConstants;
 import com.cs.kafka.utility.KafkaConfigurationLoad;
 
+
 /**
  * @author: abhaypratap singh
  **/
@@ -33,8 +34,8 @@ public class KafkaConsumerSample {
         properties.getProperty(KafkaConstants.GROUP_ID));
     
     Consumer<String, String> kafkaConsumer = new KafkaConsumer<String, String>(consumerProperties);
-    kafkaConsumer
-        .subscribe(Collections.singletonList(properties.getProperty(KafkaConstants.TOPIC_NAME)));
+    KafkaRebalnceListener listener = new KafkaRebalnceListener(kafkaConsumer);
+    kafkaConsumer.subscribe(Collections.singletonList(properties.getProperty(KafkaConstants.TOPIC_NAME)), listener);
     try {
       while (true) {
         Duration duration = Duration.ofMillis(1000);
@@ -46,8 +47,8 @@ public class KafkaConsumerSample {
           System.out.println(key);
           System.out.println(value);
           System.out.println("Message Received");
+          listener.addoffset(consumerRecord.topic(), consumerRecord.partition(), consumerRecord.offset());
         }
-        kafkaConsumer.commitAsync();
       }
     }
     catch (Throwable e) {
@@ -55,7 +56,6 @@ public class KafkaConsumerSample {
       e.printStackTrace();
     }
     finally {
-      kafkaConsumer.commitSync();
       kafkaConsumer.close();
     }
   }
